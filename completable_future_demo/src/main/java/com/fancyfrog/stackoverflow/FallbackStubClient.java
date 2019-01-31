@@ -22,7 +22,7 @@ public class FallbackStubClient implements StackOverflowClient{
        try{
           return target.mostRecentQuestionAbout(tag);
        }catch (Exception e){
-          System.out.println(String.format("Problem retrieving tag {}",tag,e));
+          System.out.println(String.format("Problem retrieving tag %s",tag,e));
           switch (tag){
               case "java":
                   return "How to generate xml report with maven depencency?";

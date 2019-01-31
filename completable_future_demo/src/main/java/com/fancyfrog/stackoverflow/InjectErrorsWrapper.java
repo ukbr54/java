@@ -32,7 +32,7 @@ public class InjectErrorsWrapper implements StackOverflowClient{
     private void throwIfBlackListed(String tag){
         if(blackList.contains(tag)){
             ArtificialSleepWrapper.artificialSleep(400);
-            System.out.println(String.format("About to throw artifical exception due to: {}", tag));
+            System.out.println(String.format("About to throw artifical exception due to: %s", tag));
             throw new IllegalArgumentException("Unsupported " + tag);
         }
     }

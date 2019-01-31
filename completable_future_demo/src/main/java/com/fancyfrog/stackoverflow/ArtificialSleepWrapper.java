@@ -25,7 +25,7 @@ public class ArtificialSleepWrapper implements StackOverflowClient{
 
     @Override
     public Document mostRecentQuestionsAbout(String tag) {
-        artificialSleep(1000);
+        //artificialSleep(1000);
         final long start = System.currentTimeMillis();
         final Document result = target.mostRecentQuestionsAbout(tag);
         artificialSleep(1000 - (System.currentTimeMillis() - start));

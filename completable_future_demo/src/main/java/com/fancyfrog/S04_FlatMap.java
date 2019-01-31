@@ -38,7 +38,7 @@ public class S04_FlatMap extends AbstractFuturesTest {
                 .thenCompose(doc -> findMostInterestingQuestion(doc))
                 .thenCompose(question -> googleAnswer(question))
                 .thenCompose(answer -> postAnswer(answer))
-                .thenCompose(status ->{
+                .thenAccept(status ->{
                     if(status == 200){
                         System.out.println("Ok");
                     }else{

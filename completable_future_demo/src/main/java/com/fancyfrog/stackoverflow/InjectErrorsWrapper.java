@@ -1,12 +1,16 @@
 package com.fancyfrog.stackoverflow;
 
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 public class InjectErrorsWrapper implements StackOverflowClient{
+
+    private static Logger log = LoggerFactory.getLogger(InjectErrorsWrapper.class);
 
     private final StackOverflowClient target;
 
@@ -32,7 +36,7 @@ public class InjectErrorsWrapper implements StackOverflowClient{
     private void throwIfBlackListed(String tag){
         if(blackList.contains(tag)){
             ArtificialSleepWrapper.artificialSleep(400);
-            System.out.println(String.format("About to throw artifical exception due to: %s", tag));
+            log.debug("About to throw artifical exception due to: {}",tag);
             throw new IllegalArgumentException("Unsupported " + tag);
         }
     }

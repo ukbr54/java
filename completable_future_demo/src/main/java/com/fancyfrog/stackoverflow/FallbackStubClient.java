@@ -4,12 +4,16 @@ import com.google.common.base.Throwables;
 import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
 
 
 public class FallbackStubClient implements StackOverflowClient{
+
+    private static Logger log = LoggerFactory.getLogger(FallbackStubClient.class);
 
     private final StackOverflowClient target;
 
@@ -22,7 +26,7 @@ public class FallbackStubClient implements StackOverflowClient{
        try{
           return target.mostRecentQuestionAbout(tag);
        }catch (Exception e){
-          System.out.println(String.format("Problem retrieving tag %s",tag,e));
+           log.debug("Problem retrieving tag ({}): {}",tag,e);
           switch (tag){
               case "java":
                   return "How to generate xml report with maven depencency?";
@@ -43,7 +47,7 @@ public class FallbackStubClient implements StackOverflowClient{
         try{
             return target.mostRecentQuestionsAbout(tag);
         }catch (Exception e){
-            System.out.println(String.format("Problem retrieving recent question {}", tag, e));
+            log.debug("Problem retrieving recent question ({}): {}",tag,e);
             return loadStubHtmlFromDisk(tag);
         }
     }

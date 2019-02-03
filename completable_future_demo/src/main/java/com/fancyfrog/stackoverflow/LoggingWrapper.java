@@ -4,8 +4,12 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoggingWrapper implements StackOverflowClient{
+
+    private Logger log = LoggerFactory.getLogger(LoggingWrapper.class);
 
     private final StackOverflowClient target;
 
@@ -15,17 +19,17 @@ public class LoggingWrapper implements StackOverflowClient{
 
     @Override
     public String mostRecentQuestionAbout(String tag) {
-        System.out.println(String.format("Entering mostRecentQuestionAbout %s", tag));
+        log.debug("Entering mostRecentQuestionAbout: {}",tag);
         final String title = target.mostRecentQuestionAbout(tag);
-        System.out.println(String.format("Leaving mostRecentQuestionAbout (%s): %s", tag, title));
+        log.debug("Leaving mostRecentQuestionAbout ({}): {}",tag,title);
         return title;
     }
 
     @Override
     public Document mostRecentQuestionsAbout(String tag) {
-        System.out.println(String.format("Entering mostRecentQuestionsAbout %s", tag));
+        log.debug("Entering mostRecentQuestionsAbout {}",tag);
         final Document document = target.mostRecentQuestionsAbout(tag);
-        System.out.println(String.format("Leaving mostRecentQuestionsAbout(%s): %s", tag, htmlExcerpt(document)));
+        log.debug("Leaving mostRecentQuestionsAbout({}): {}", tag, htmlExcerpt(document));
         return document;
     }
 

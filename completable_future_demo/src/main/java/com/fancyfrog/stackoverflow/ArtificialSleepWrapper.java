@@ -1,11 +1,15 @@
 package com.fancyfrog.stackoverflow;
 
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class ArtificialSleepWrapper implements StackOverflowClient{
+
+    private static Logger log = LoggerFactory.getLogger(ArtificialSleepWrapper.class);
 
     private static final Random RANDOM = new Random();
 
@@ -35,7 +39,7 @@ public class ArtificialSleepWrapper implements StackOverflowClient{
     protected static void artificialSleep(long expected){
         try{
             double sleep = expected + RANDOM.nextGaussian() * expected / 2;
-            System.out.println("Sleep Time: "+sleep);
+            log.debug("Sleep Time: {}",sleep);
             TimeUnit.SECONDS.sleep((long)(sleep));
         }catch (InterruptedException e){
             throw new RuntimeException();

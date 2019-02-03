@@ -1,7 +1,7 @@
-package com.fancyfrog;
+package com.fancyfrog.example1;
 
-import com.fancyfrog.stackoverflow.Question;
-import com.fancyfrog.utils.AbstractFuturesTest;
+import com.fancyfrog.example1.stackoverflow.Question;
+import com.fancyfrog.example1.utils.AbstractFuturesTest;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
 

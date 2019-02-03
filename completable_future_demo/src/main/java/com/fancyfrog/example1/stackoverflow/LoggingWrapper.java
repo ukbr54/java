@@ -1,4 +1,4 @@
-package com.fancyfrog.stackoverflow;
+package com.fancyfrog.example1.stackoverflow;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;

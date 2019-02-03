@@ -1,6 +1,6 @@
-package com.fancyfrog.utils;
+package com.fancyfrog.example1.utils;
 
-import com.fancyfrog.stackoverflow.*;
+import com.fancyfrog.example1.stackoverflow.*;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.junit.After;
 import org.junit.Before;

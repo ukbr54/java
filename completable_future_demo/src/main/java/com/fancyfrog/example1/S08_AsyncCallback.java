@@ -1,7 +1,6 @@
-package com.fancyfrog;
+package com.fancyfrog.example1;
 
-import com.fancyfrog.utils.AbstractFuturesTest;
-import org.jsoup.nodes.Document;
+import com.fancyfrog.example1.utils.AbstractFuturesTest;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

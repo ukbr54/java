@@ -1,4 +1,4 @@
-package com.fancyfrog.stackoverflow;
+package com.fancyfrog.example1.stackoverflow;
 
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;

@@ -1,6 +1,6 @@
-package com.fancyfrog;
+package com.fancyfrog.example1;
 
-import com.fancyfrog.utils.AbstractFuturesTest;
+import com.fancyfrog.example1.utils.AbstractFuturesTest;
 import org.junit.Test;
 
 import java.util.concurrent.Callable;

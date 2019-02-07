@@ -1,0 +1,8 @@
+travel:
+    poiDetailsApis:
+        baseurl : ${base_url}
+        apikey : ${api_key}
+        findPlace : ${find_place}
+        poiDetail : ${details}
+        nearby : ${near_by_search}
+        fields : formatted_address,geometry,icon,id,name,permanently_closed,photos,place_id,plus_code,types,opening_hours,price_level,rating

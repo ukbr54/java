@@ -2,6 +2,8 @@ package com.fancyfrog.travelTickets.service;
 
 import com.fancyfrog.travelTickets.common.ExternalApiConstants;
 import com.fancyfrog.travelTickets.vo.PlaceDetail;
+import com.fancyfrog.travelTickets.ws.WSPlaceDetails;
+import com.fancyfrog.travelTickets.ws.WSPoiDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -14,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @Slf4j
@@ -29,6 +33,7 @@ public class TravelTicketService {
     private final String KEY = "key";
     private @Autowired Environment env;
     private @Autowired RestTemplate restTemplate;
+    private static ExecutorService service = Executors.newCachedThreadPool();
 
     @PostConstruct
     public void init(){
@@ -39,15 +44,26 @@ public class TravelTicketService {
         this.nearby = env.getProperty("travel.poiDetailsApis");
     }
 
-    public void getPlaceDetailsWithTickets(){
-
+    public WSPlaceDetails getPlaceDetailsWithTickets(String poiId){
+        WSPlaceDetails placeDetails = new WSPlaceDetails();
+        long start = System.currentTimeMillis();
+        CompletableFuture<Void> placeDetailsFuture = getPlaceDetails(poiId)
+                .thenAccept(poi -> {
+                    placeDetails.setPoiDetails(new WSPoiDetails(poi.getResult()));
+                    System.out.println("=====" + poi.getResult().getFormattedAddress() + ":" + Thread.currentThread());
+                });
+        while(!placeDetailsFuture.isDone()){
+            
+        }
+        log.info("looking for place details for: {} take time: {}",poiId,(System.currentTimeMillis() - start));
+        return placeDetails;
     }
 
     private CompletableFuture<PlaceDetail> getPlaceDetails(String poiId){
        HttpHeaders headers = generateHeaders();
         HttpEntity<String> entity = new HttpEntity<>(ExternalApiConstants.PARAMETERS, headers);
         return CompletableFuture.supplyAsync(() ->
-                restTemplate.exchange(generateUrl(poiId),HttpMethod.GET,entity,PlaceDetail.class).getBody()
+                restTemplate.exchange(generateUrl(poiId),HttpMethod.GET,entity,PlaceDetail.class).getBody(),service
         );
     }
 

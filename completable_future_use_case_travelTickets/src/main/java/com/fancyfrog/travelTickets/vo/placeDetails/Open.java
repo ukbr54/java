@@ -1,4 +1,4 @@
-package com.fancyfrog.travelTickets.vo;
+package com.fancyfrog.travelTickets.vo.placeDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

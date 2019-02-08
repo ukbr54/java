@@ -6,4 +6,5 @@ public interface ExternalApiConstants {
     String QUESTION_MARK = "?";
     String EQUALS_TO = "=";
     String AMPERSAND =  "&";
+    String X_API_KEY = "x-api-key";
 }

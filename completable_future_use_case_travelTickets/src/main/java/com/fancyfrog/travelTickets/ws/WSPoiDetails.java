@@ -1,10 +1,7 @@
 package com.fancyfrog.travelTickets.ws;
 
-import com.fancyfrog.travelTickets.vo.PlaceDetail;
-import com.fancyfrog.travelTickets.vo.Result;
+import com.fancyfrog.travelTickets.vo.placeDetails.Result;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class WSPoiDetails {

@@ -6,3 +6,7 @@ travel:
         poiDetail : ${details}
         nearby : ${near_by_search}
         fields : formatted_address,geometry,icon,id,name,permanently_closed,photos,place_id,plus_code,types,opening_hours,price_level,rating
+    ticket1_S:
+        baseurl: ${ticket1_base_url}
+        apiKey: ${ticket1_api_key}
+        tour: ${ticket1_tours}

@@ -10,4 +10,5 @@ public class WSTourRequest {
     private String query;
     private String ticket2_id;
     private String locationId;
+    private String ticket3_id;
 }

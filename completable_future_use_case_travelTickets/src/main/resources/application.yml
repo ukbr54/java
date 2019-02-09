@@ -12,6 +12,11 @@ travel:
         tour: ${ticket1_tours}
     ticket2_T:
         baseurl : ${ticket2_base_url}
-        account : ${account}
-        token : ${token}
-        tour : ${tour_url}
+        account : ${ticket2_T_account}
+        token : ${ticket2_T_token}
+        tour : ${ticket2_T_tour}
+
+spring:
+    redis:
+      host: localhost
+      port: 6379

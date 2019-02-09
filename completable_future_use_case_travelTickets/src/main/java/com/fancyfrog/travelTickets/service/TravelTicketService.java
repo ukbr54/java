@@ -99,15 +99,16 @@ public class TravelTicketService {
     }
 
     private void processPoiDetails(WSPlaceDetails placeDetails,WSTourRequest tourRequest){
-        long start = System.currentTimeMillis();
         CompletableFuture<Void> placeDetailsFuture = getPlaceDetails(tourRequest.getPoiId())
                 .thenAccept(poi -> {
+                    long start = System.currentTimeMillis();
                     placeDetails.setPoiDetails(new WSPoiDetails(poi.getResult()));
+                    log.info("looking for place details for: {} take time: {}",tourRequest.getPoiId(),(System.currentTimeMillis() - start)+" ms");
                 });
         if(!placeDetailsFuture.isDone()){
             placeDetailsFuture.join();
         }
-        log.info("looking for place details for: {} take time: {}",tourRequest.getPoiId(),(System.currentTimeMillis() - start)+" ms");
+
     }
 
     private void processAllTickets(List<WSActivity> wsActivities,WSTourRequest tourRequest){

@@ -1,7 +1,9 @@
 package com.fancyfrog.travelTickets.ws.request;
 
 import com.fancyfrog.travelTickets.vo.ticket1_S.TourVO;
+import com.fancyfrog.travelTickets.vo.ticket2_T.ResultVO;
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -19,6 +21,8 @@ public class WSActivity {
     private Double rating;
     private String title;
     private String url;
+    private String vendorId;
+    private String vendor;
 
     public WSActivity(TourVO tourVO){
         this.duration = tourVO.getDuration();
@@ -32,5 +36,18 @@ public class WSActivity {
         this.rating = tourVO.getRating();
         this.title = tourVO.getTitle();
         this.url = tourVO.getUrl();
+    }
+
+    public WSActivity(ResultVO resultVO){
+        this.title = resultVO.getName();
+        this.vendorId = resultVO.getBookingInfo().getVendorObjectId();
+        if(resultVO.getVendor().equalsIgnoreCase("musement")){
+            this.vendor = "Musement";
+        }
+        this.price = Math.ceil(resultVO.getConvertedPrice().getAmount());
+        this.originalPrice = resultVO.getPrice().getAmount();
+        if(CollectionUtils.isNotEmpty(resultVO.getImages())){
+            this.photoUrl = resultVO.getImages().get(0).getSizes().getThumbnail().getUrl();
+        }
     }
 }

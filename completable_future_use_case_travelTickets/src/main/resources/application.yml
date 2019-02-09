@@ -10,3 +10,8 @@ travel:
         baseurl: ${ticket1_base_url}
         apiKey: ${ticket1_api_key}
         tour: ${ticket1_tours}
+    ticket2_T:
+        baseurl : ${ticket2_base_url}
+        account : ${account}
+        token : ${token}
+        tour : ${tour_url}

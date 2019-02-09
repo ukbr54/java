@@ -21,6 +21,8 @@ public class TravelController {
         tourRequest.setPoiId("ChIJE_iu2AUZ2jERLxbinkmm-hM");
         tourRequest.setTicket1_id("city:1");
         tourRequest.setQuery("Tower of London");
+        tourRequest.setTicket2_id("T__384b451628dd");
+        tourRequest.setLocationId("London");
 
         WSPlaceDetails detailsWithTickets = travelTicketService.getPlaceDetailsWithTickets(tourRequest);
         return detailsWithTickets;

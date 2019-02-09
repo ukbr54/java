@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -89,56 +90,43 @@ public class TravelTicketService {
         //Independent Future to get the Place Details
         processPoiDetails(placeDetails,tourRequest);
 
-        CompletableFuture<Void> ticket3Future = getTicket3_V_tourDetails(tourRequest.getTicket3_id())
-                .thenApply(ticket3 -> {
-                    return ticket3.getTickets().stream()
-                            .filter(tour -> tour.getProductName().contains(tourRequest.getQuery()))
-                            .collect(Collectors.toList());
-                }).thenAccept(matchedActivities ->
-                        wsActivities.addAll(matchedActivities.stream().map(WSActivity::new).collect(Collectors.toList()))
-                );
+        //Looking for multiple provider for tickets
+        processAllTickets(wsActivities,tourRequest);
+        List<WSActivity> activitySortedBasedOnPrice = wsActivities.stream().sorted(Comparator.comparing(WSActivity::getPrice)).collect(Collectors.toList());
 
-        if(!ticket3Future.isDone()){
-            ticket3Future.join();
-        }
-
-        placeDetails.setActivities(wsActivities);
+        placeDetails.setActivities(activitySortedBasedOnPrice);
         return placeDetails;
-    }
-
-    private void processTicket2(List<WSActivity> wsActivities,WSTourRequest tourRequest){
-        CompletableFuture<Void> ticket2Future = getTicket2_T_tourDetails(tourRequest.getTicket2_id(), tourRequest.getLocationId())
-                .thenApply(ticket2 -> {
-                    log.info("The number of entries for {} is {} ", tourRequest.getTicket2_id(), ticket2.getResults().size());
-                    return ticket2.getResults().stream()
-                            .filter(tour -> tour.getName().contains(tourRequest.getQuery()))
-                            .collect(Collectors.toList());
-                }).thenAccept(matchedActivities ->
-                        wsActivities.addAll(matchedActivities.stream().map(WSActivity::new).collect(Collectors.toList()))
-                );
-        if(!ticket2Future.isDone()){
-            ticket2Future.join();
-        }
     }
 
     private void processPoiDetails(WSPlaceDetails placeDetails,WSTourRequest tourRequest){
         long start = System.currentTimeMillis();
         CompletableFuture<Void> placeDetailsFuture = getPlaceDetails(tourRequest.getPoiId())
                 .thenAccept(poi -> {
-                    log.info("fetching the details: {}", poi.getResult().getName());
                     placeDetails.setPoiDetails(new WSPoiDetails(poi.getResult()));
                 });
         if(!placeDetailsFuture.isDone()){
             placeDetailsFuture.join();
         }
-        log.info("looking for place details for: {} take time: {}",tourRequest.getPoiId(),(System.currentTimeMillis() - start));
+        log.info("looking for place details for: {} take time: {}",tourRequest.getPoiId(),(System.currentTimeMillis() - start)+" ms");
     }
 
     private void processAllTickets(List<WSActivity> wsActivities,WSTourRequest tourRequest){
-        long start1 = System.currentTimeMillis();
-        CompletableFuture<Void> ticket1_S_future = getTicket1_SToursDetails(tourRequest.getTicket1_id(), tourRequest.getQuery())
+        long start = System.currentTimeMillis();
+        CompletableFuture<Void> future = CompletableFuture.allOf(
+                process_Ticket1_S(wsActivities, tourRequest),
+                process_Ticket2_T(wsActivities, tourRequest),
+                process_Ticket3_V(wsActivities, tourRequest)
+        );
+
+        if(!future.isDone()){
+            future.join();
+        }
+        log.info("To process all the tickets: {}",(System.currentTimeMillis() - start)+" ms");
+    }
+
+    private CompletableFuture<Void> process_Ticket1_S(List<WSActivity> wsActivities,WSTourRequest tourRequest){
+         return getTicket1_SToursDetails(tourRequest.getTicket1_id(), tourRequest.getQuery())
                 .thenApply(ticket1 ->{
-                            log.debug("The number of entries for {} is {}",tourRequest.getQuery(),ticket1.getData().getTours().size());
                             return ticket1.getData().getTours().stream()
                                     .filter(tour -> tour.getTitle().contains(tourRequest.getQuery()))
                                     .collect(Collectors.toList());
@@ -146,21 +134,37 @@ public class TravelTicketService {
                 ).thenAccept(matchedActivities ->
                         wsActivities.addAll(matchedActivities.stream().map(WSActivity::new).collect(Collectors.toList()))
                 );
+    }
 
-        if(!ticket1_S_future.isDone()){
-            ticket1_S_future.join();
-        }
-        log.info("looking for ticket1_s for: {} take time: {}",tourRequest.getTicket1_id(),(System.currentTimeMillis() - start1));
+    private CompletableFuture<Void> process_Ticket2_T(List<WSActivity> wsActivities,WSTourRequest tourRequest){
+        return getTicket2_T_tourDetails(tourRequest.getTicket2_id(), tourRequest.getLocationId())
+                .thenApply(ticket2 -> {
+                    return ticket2.getResults().stream()
+                            .filter(tour -> tour.getName().contains(tourRequest.getQuery()))
+                            .collect(Collectors.toList());
+                }).thenAccept(matchedActivities ->
+                wsActivities.addAll(matchedActivities.stream().map(WSActivity::new).collect(Collectors.toList()))
+        );
+    }
+
+    private CompletableFuture<Void> process_Ticket3_V(List<WSActivity> wsActivities,WSTourRequest tourRequest){
+        return getTicket3_V_tourDetails(tourRequest.getTicket3_id())
+                .thenApply(ticket3 -> {
+                    return ticket3.getTickets().stream()
+                            .filter(tour -> tour.getProductName().contains(tourRequest.getQuery()))
+                            .collect(Collectors.toList());
+                }).thenAccept(matchedActivities ->
+                wsActivities.addAll(matchedActivities.stream().map(WSActivity::new).collect(Collectors.toList()))
+        );
     }
 
     private CompletableFuture<CityDetails> getTicket3_V_tourDetails(String id){
         return CompletableFuture.supplyAsync(() -> {
-            log.info("Looking for in the redis server: {} ",id);
             long start = System.currentTimeMillis();
             Optional<CityDetails> cityDetails = cityDetailsRepository.findById(id);
             if(cityDetails.isPresent()){
                 CityDetails details = cityDetails.get();
-                log.info("Reading the data from the redis server : {}",(System.currentTimeMillis() - start));
+                log.info("Reading the data from the redis server : {}",(System.currentTimeMillis() - start)+" ms");
                 return details;
             }else{
                 throw new RuntimeException("Resource not present!");
@@ -174,8 +178,10 @@ public class TravelTicketService {
         headers.set(ExternalApiConstants.X_TOKEN, this.ticket2_T_token);
         HttpEntity<String> entityReq = new HttpEntity<String>(ExternalApiConstants.PARAMETERS, headers);
         return CompletableFuture.supplyAsync(() ->{
-            log.info("Fetching the tickets for Ticket2 provider: {}",id);
-            return restTemplate.exchange(generateTicket2_T_url(id,locationId),HttpMethod.GET,entityReq,Ticket2_T_Response.class).getBody();
+            long start = System.currentTimeMillis();
+            Ticket2_T_Response body = restTemplate.exchange(generateTicket2_T_url(id, locationId), HttpMethod.GET, entityReq, Ticket2_T_Response.class).getBody();
+            log.info("Fetching the tickets for Ticket2 provider: {} is {}",id,(System.currentTimeMillis() - start)+" ms");
+            return body;
         },service);
     }
 
@@ -184,8 +190,10 @@ public class TravelTicketService {
         headers.set(ExternalApiConstants.X_API_KEY,this.ticket1_S_apiKey);
         HttpEntity<String> entity = new HttpEntity<>(ExternalApiConstants.PARAMETERS, headers);
         return CompletableFuture.supplyAsync(() ->{
-           log.info("Calling the Ticket1_S_ API");
-           return restTemplate.exchange(generateTicket1_S_url(id,query),HttpMethod.GET,entity,Ticket1_S_TourResponse.class).getBody();
+            long start = System.currentTimeMillis();
+            Ticket1_S_TourResponse body = restTemplate.exchange(generateTicket1_S_url(id, query), HttpMethod.GET, entity, Ticket1_S_TourResponse.class).getBody();
+            log.info("To get the ticket1: {} tour details is {}",id,(System.currentTimeMillis() - start)+" ms");
+            return body;
         },service);
     }
 
@@ -193,10 +201,11 @@ public class TravelTicketService {
         HttpHeaders headers = generateHeaders();
         HttpEntity<String> entity = new HttpEntity<>(ExternalApiConstants.PARAMETERS, headers);
         return CompletableFuture.supplyAsync(() ->{
-                 log.info("Poi place Api get called");
-                 return restTemplate.exchange(generatePlaceDetailUrl(poiId),HttpMethod.GET,entity,PlaceDetail.class).getBody();
-             },service
-        );
+                 long start = System.currentTimeMillis();
+                 PlaceDetail body = restTemplate.exchange(generatePlaceDetailUrl(poiId), HttpMethod.GET, entity, PlaceDetail.class).getBody();
+            log.info("To get place details of poi: {} is {}",poiId,(System.currentTimeMillis() - start)+" ms");
+            return body;
+        },service);
     }
 
     private String generateTicket2_T_url(String id,String locationId){

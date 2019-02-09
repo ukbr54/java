@@ -42,9 +42,6 @@ public class WSActivity {
     public WSActivity(ResultVO resultVO){
         this.title = resultVO.getName();
         this.vendorId = resultVO.getBookingInfo().getVendorObjectId();
-        if(resultVO.getVendor().equalsIgnoreCase("musement")){
-            this.vendor = "Musement";
-        }
         this.price = Math.ceil(resultVO.getConvertedPrice().getAmount());
         this.originalPrice = resultVO.getPrice().getAmount();
         if(CollectionUtils.isNotEmpty(resultVO.getImages())){

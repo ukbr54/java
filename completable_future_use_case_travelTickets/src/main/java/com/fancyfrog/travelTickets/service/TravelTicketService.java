@@ -30,6 +30,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+/**
+ *  1. Timeout exception for third party apis
+ *  2. Handle the exception
+ */
 @Service
 @Slf4j
 public class TravelTicketService {
@@ -99,16 +103,19 @@ public class TravelTicketService {
     }
 
     private void processPoiDetails(WSPlaceDetails placeDetails,WSTourRequest tourRequest){
-        CompletableFuture<Void> placeDetailsFuture = getPlaceDetails(tourRequest.getPoiId())
+        CompletableFuture<Void> placeDetailsFuture
+                = getPlaceDetails(tourRequest.getPoiId())
                 .thenAccept(poi -> {
                     long start = System.currentTimeMillis();
                     placeDetails.setPoiDetails(new WSPoiDetails(poi.getResult()));
-                    log.info("looking for place details for: {} take time: {}",tourRequest.getPoiId(),(System.currentTimeMillis() - start)+" ms");
+                    log.info("looking for place details for: {} take time: {}", tourRequest.getPoiId(), (System.currentTimeMillis() - start) + " ms");
                 });
-        if(!placeDetailsFuture.isDone()){
-            placeDetailsFuture.join();
-        }
 
+        try{
+            placeDetailsFuture.join();
+        }catch (Exception e){
+            log.error("Place detail api failing: {}",e.getCause());
+        }
     }
 
     private void processAllTickets(List<WSActivity> wsActivities,WSTourRequest tourRequest){

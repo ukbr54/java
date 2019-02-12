@@ -11,6 +11,7 @@ import com.fancyfrog.travelTickets.ws.WSPoiDetails;
 import com.fancyfrog.travelTickets.ws.request.WSActivity;
 import com.fancyfrog.travelTickets.ws.request.WSTourRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -21,11 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -110,11 +109,8 @@ public class TravelTicketService {
                     placeDetails.setPoiDetails(new WSPoiDetails(poi.getResult()));
                     log.info("looking for place details for: {} take time: {}", tourRequest.getPoiId(), (System.currentTimeMillis() - start) + " ms");
                 });
-
-        try{
+        if(!placeDetailsFuture.isDone()){
             placeDetailsFuture.join();
-        }catch (Exception e){
-            log.error("Place detail api failing: {}",e.getCause());
         }
     }
 
@@ -125,14 +121,13 @@ public class TravelTicketService {
                 process_Ticket2_T(wsActivities, tourRequest),
                 process_Ticket3_V(wsActivities, tourRequest)
         );
-
         if(!future.isDone()){
             future.join();
         }
         log.info("To process all the tickets: {}",(System.currentTimeMillis() - start)+" ms");
     }
 
-    private CompletableFuture<Void> process_Ticket1_S(List<WSActivity> wsActivities,WSTourRequest tourRequest){
+    private CompletableFuture<?> process_Ticket1_S(List<WSActivity> wsActivities,WSTourRequest tourRequest){
          return getTicket1_SToursDetails(tourRequest.getTicket1_id(), tourRequest.getQuery())
                 .thenApply(ticket1 ->{
                             return ticket1.getData().getTours().stream()
@@ -145,14 +140,23 @@ public class TravelTicketService {
     }
 
     private CompletableFuture<Void> process_Ticket2_T(List<WSActivity> wsActivities,WSTourRequest tourRequest){
-        return getTicket2_T_tourDetails(tourRequest.getTicket2_id(), tourRequest.getLocationId())
-                .thenApply(ticket2 -> {
-                    return ticket2.getResults().stream()
-                            .filter(tour -> tour.getName().contains(tourRequest.getQuery()))
-                            .collect(Collectors.toList());
-                }).thenAccept(matchedActivities ->
-                wsActivities.addAll(matchedActivities.stream().map(WSActivity::new).collect(Collectors.toList()))
-        );
+        CompletableFuture<Ticket2_T_Response> ticket2_t_tourDetails = getTicket2_T_tourDetails(tourRequest.getTicket2_id(), tourRequest.getLocationId());
+        return
+                ticket2_t_tourDetails
+                        .thenApply(ticket2 -> {
+                            if(ticket2 != null){
+                                return ticket2.getResults().stream()
+                                        .filter(tour -> tour.getName().contains(tourRequest.getQuery()))
+                                        .collect(Collectors.toList());
+                            }else{
+                                return null;
+                            }
+                        }).thenAccept(matchedActivities ->{
+                            if(CollectionUtils.isNotEmpty(matchedActivities)){
+                                wsActivities.addAll(matchedActivities.stream().map(WSActivity::new).collect(Collectors.toList()));
+                            }
+                        }
+                );
     }
 
     private CompletableFuture<Void> process_Ticket3_V(List<WSActivity> wsActivities,WSTourRequest tourRequest){
@@ -190,7 +194,10 @@ public class TravelTicketService {
             Ticket2_T_Response body = restTemplate.exchange(generateTicket2_T_url(id, locationId), HttpMethod.GET, entityReq, Ticket2_T_Response.class).getBody();
             log.info("Fetching the tickets for Ticket2 provider: {} is {}",id,(System.currentTimeMillis() - start)+" ms");
             return body;
-        },service);
+        },service).exceptionally( ex -> {
+            log.error("Something went wrong : ", ex);
+            return null;
+        });
     }
 
     private CompletableFuture<Ticket1_S_TourResponse> getTicket1_SToursDetails(String id,String query){

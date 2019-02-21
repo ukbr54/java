@@ -12,7 +12,7 @@ public class Palimdrome {
         System.out.println(isPalindromeUsingReverse(value));
         System.out.println(isPalindromeUsingStream(value));
     }
-    
+
     public static boolean isPalindrome(String text){
         String clean = text.replaceAll("\\s+", "").toLowerCase();
         int length = clean.length();

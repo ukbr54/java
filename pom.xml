@@ -22,7 +22,7 @@
         <module>completable_future_demo</module>
         <module>completable_future_use_case_travelTickets</module>
         <module>core_java</module>
-        <module><![CDATA[algo&Data_Structure_made_easy]]></module>
+        <module>hacker_rank</module>
     </modules>
 
     <dependencies>

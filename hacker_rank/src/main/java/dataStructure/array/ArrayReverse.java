@@ -1,4 +1,4 @@
-package dataStructure;
+package dataStructure.array;
 
 /**
  * Created by Ujjwal Gupta on Aug,2019
@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class ArrayReverse {
 
     static int[] reverse(int[] arr){
-        for(int i = 0; i < arr.length / 2; i++){
+        for(int i = 0; i < arr.length / 2; i++){ // O(log n)
             int temp = arr[i];
             arr[i] = arr[arr.length - i - 1];
             arr[arr.length - i -1] = temp;

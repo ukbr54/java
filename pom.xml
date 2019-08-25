@@ -18,7 +18,6 @@
 
 
     <modules>
-        <module>java_8_impatient</module>
         <module>completable_future_demo</module>
         <module>completable_future_use_case_travelTickets</module>
         <module>core_java</module>

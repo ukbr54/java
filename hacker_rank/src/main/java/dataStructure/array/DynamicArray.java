@@ -3,7 +3,6 @@ package dataStructure.array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by Ujjwal Gupta on Aug,2019

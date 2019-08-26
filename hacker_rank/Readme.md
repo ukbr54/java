@@ -1,10 +1,10 @@
- ##HackerRank
+ ## HackerRank
  - Interview Preparation Kit
  - Problem Solving
  - Java
  - Databases
  
- ###JAVA
+ ### JAVA
  SubDomains | Challenge | Solution |
  ------------ | -------------|-------|
  Strings  | [Java Strings Introduction](https://www.hackerrank.com/challenges/java-strings-introduction/problem) | 

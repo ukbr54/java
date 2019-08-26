@@ -1,14 +1,15 @@
  ## HackerRank
  - Interview Preparation Kit
-    * Stacks & Queues
  - Problem Solving
+    * Stacks
  - Java
  - Databases
  
- ### Stacks & Queues
+ ### Stacks
  SubDomains | Challenge | Solution |
  ------------ | -------------|-------|
  Stack | [Maximum Element](https://www.hackerrank.com/challenges/maximum-element/problem) | [MaximumElement.java](src/main/java/dataStructure/stack/MaximumElement.java)
+ Stack | [Balanced Brackets](https://www.hackerrank.com/challenges/balanced-brackets/problem) | [BalancedBraackets.java](src/main/java/dataStructure/stack/BalancedBrackets.java)
  
  ### JAVA
  SubDomains | Challenge | Solution |

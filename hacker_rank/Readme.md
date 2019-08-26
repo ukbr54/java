@@ -8,7 +8,7 @@
  ### Stacks & Queues
  SubDomains | Challenge | Solution |
  ------------ | -------------|-------|
- Stack | [Maximum Element](https://www.hackerrank.com/challenges/maximum-element/problem) | 
+ Stack | [Maximum Element](https://www.hackerrank.com/challenges/maximum-element/problem) | [MaximumElement.java](src/main/java/dataStructure/stack/MaximumElement.java)
  
  ### JAVA
  SubDomains | Challenge | Solution |

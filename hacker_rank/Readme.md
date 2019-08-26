@@ -9,7 +9,7 @@
  SubDomains | Challenge | Solution |
  ------------ | -------------|-------|
  Stack | [Maximum Element](https://www.hackerrank.com/challenges/maximum-element/problem) | [MaximumElement.java](src/main/java/dataStructure/stack/MaximumElement.java)
- Stack | [Balanced Brackets](https://www.hackerrank.com/challenges/balanced-brackets/problem) | [BalancedBraackets.java](src/main/java/dataStructure/stack/BalancedBrackets.java)
+ Stack | [Balanced Brackets](https://www.hackerrank.com/challenges/balanced-brackets/problem) | [BalancedBrackets.java](src/main/java/dataStructure/stack/BalancedBrackets.java)
  
  ### JAVA
  SubDomains | Challenge | Solution |

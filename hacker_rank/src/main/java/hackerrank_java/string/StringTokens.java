@@ -1,6 +1,5 @@
-package avaj;
+package hackerrank_java.string;
 
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 

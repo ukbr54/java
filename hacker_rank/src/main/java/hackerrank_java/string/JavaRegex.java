@@ -1,7 +1,5 @@
-package avaj;
+package hackerrank_java.string;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class JavaRegex {

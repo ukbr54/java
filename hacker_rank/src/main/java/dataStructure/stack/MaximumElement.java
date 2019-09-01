@@ -3,6 +3,10 @@ package dataStructure.stack;
 import java.util.Scanner;
 import java.util.Stack;
 
+/**
+ *  Here, for every push in the mainStack, there is a push in the maxStack also. So overall space complexity is O(n).
+ */
+
 public class MaximumElement {
 
     public static void main(String[] args) throws Exception {

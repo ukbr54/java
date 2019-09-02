@@ -1,5 +1,8 @@
 package exception;
 
+/**
+ * finally block will always execute weather the catch block containing the return statement.
+ */
 public class Test2 {
 
     protected static int m1(){

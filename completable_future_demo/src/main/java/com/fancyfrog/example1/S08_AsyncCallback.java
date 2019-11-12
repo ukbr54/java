@@ -3,7 +3,6 @@ package com.fancyfrog.example1;
 import com.fancyfrog.example1.utils.AbstractFuturesTest;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -12,7 +11,7 @@ import java.util.concurrent.Executors;
 
 public class S08_AsyncCallback extends AbstractFuturesTest {
 
-    private static final Logger log = LoggerFactory.getLogger(S08_AsyncCallback.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(S08_AsyncCallback.class);
 
     protected final ExecutorService poolAlpha =
             Executors.newFixedThreadPool(10,threadFactory("Alpha"));
@@ -40,8 +39,7 @@ public class S08_AsyncCallback extends AbstractFuturesTest {
 
         first.thenAccept(q -> log.debug("Sync: {}", q));
         first.thenAcceptAsync(q -> log.debug("Async: {}", q));
-        first.thenAcceptAsync(q -> log.debug("Async (pool): {}", q),
-                poolGamma);
+        first.thenAcceptAsync(q -> log.debug("Async (pool): {}", q), poolGamma);
         first.get();
     }
 }
